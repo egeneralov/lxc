@@ -46,9 +46,3 @@
     - {l: 'lxc.network.link = lxcbr0', r: '^lxc.network.link.*'}
     - {l: 'lxc.network.hwaddr = 00:FF:AA:00:xx:xx', r: '^lxc.network.hwaddr.*'}
 #     - {l: '', r: '^'}
-
-
-
-\
-
-
