@@ -22,7 +22,7 @@ Just use default values.
 
     - hosts: servers
       roles:
-         - { role: username.rolename, x: 42 }
+         - egeneralov.lxc
 
 ### installation with existing bridge
 
@@ -39,7 +39,7 @@ Replace `br0` with your own value.
             - {l: 'lxc.network.link = br0', r: '^lxc.network.link.*'}
             - {l: 'lxc.network.hwaddr = 00:FF:AA:00:xx:xx', r: '^lxc.network.hwaddr.*'}
       roles:
-         - { role: username.rolename, x: 42 }
+         - egeneralov.lxc
 
 ## License
 
