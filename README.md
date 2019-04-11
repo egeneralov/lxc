@@ -1,38 +1,50 @@
-Role Name
-=========
+# egeneralov.lxc
 
-A brief description of the role goes here.
+Provision LXC installation.
 
-Requirements
-------------
+## Requirements
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+Debian 8/9.
 
-Role Variables
---------------
+## Role Variables
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+Just (re)place config. 
 
-Dependencies
-------------
+- **lxc**:
+  - **net**:
+    - `{l: '', r: '^'}`
+  - **conf**:
+    - `{l: '', r: '^'}`
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+### installation with NAT networking
 
-Example Playbook
-----------------
-
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+Just use default values.
 
     - hosts: servers
       roles:
          - { role: username.rolename, x: 42 }
 
-License
--------
+### installation with existing bridge
 
-BSD
+Replace `br0` with your own value.
 
-Author Information
-------------------
+    - hosts: servers
+      vars:
+        lxc:
+          net:
+            - {l: 'USE_LXC_BRIDGE="false"', r: '^USE_LXC_BRIDGE.*'}
+          conf:
+            - {l: 'lxc.network.type = veth', r: '^lxc.network.type.*'}
+            - {l: 'lxc.network.flags = up', r: '^lxc.network.flags.*'}
+            - {l: 'lxc.network.link = br0', r: '^lxc.network.link.*'}
+            - {l: 'lxc.network.hwaddr = 00:FF:AA:00:xx:xx', r: '^lxc.network.hwaddr.*'}
+      roles:
+         - { role: username.rolename, x: 42 }
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+## License
+
+MIT
+
+## Author Information
+
+Eduard Generalov <eduard@generalov.net>

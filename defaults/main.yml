@@ -1,2 +1,21 @@
 ---
 # defaults file for egeneralov.lxc
+
+lxc:
+  net:
+    - {l: 'USE_LXC_BRIDGE="true"', r: '^USE_LXC_BRIDGE.*'}
+    - {l: 'LXC_BRIDGE="lxcbr0"', r: '^LXC_BRIDGE.*'}
+    - {l: 'LXC_ADDR="10.0.3.1"', r: '^LXC_ADDR.*'}
+    - {l: 'LXC_NETMASK="255.255.255.0"', r: '^LXC_NETMASK.*'}
+    - {l: 'LXC_NETWORK="10.0.3.0/24"', r: '^LXC_NETWORK.*'}
+    - {l: 'LXC_DHCP_RANGE="10.0.3.2,10.0.3.254"', r: '^LXC_DHCP_RANGE.*'}
+    - {l: 'LXC_DHCP_MAX="253"', r: '^LXC_DHCP_MAX.*'}
+    - {l: 'LXC_DHCP_CONFILE=""', r: '^LXC_DHCP_CONFILE.*'}
+    - {l: 'LXC_DOMAIN=""', r: '^LXC_DOMAIN.*'}
+#     - {l: '', r: '^'}
+  conf:
+    - {l: 'lxc.network.type = veth', r: '^lxc.network.type.*'}
+    - {l: 'lxc.network.flags = up', r: '^lxc.network.flags.*'}
+    - {l: 'lxc.network.link = lxcbr0', r: '^lxc.network.link.*'}
+    - {l: 'lxc.network.hwaddr = 00:FF:AA:00:xx:xx', r: '^lxc.network.hwaddr.*'}
+#     - {l: '', r: '^'}

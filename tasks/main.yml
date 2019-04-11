@@ -1,48 +1,38 @@
 ---
 # tasks file for egeneralov.lxc
 
-- apt:
+- name: install lxc
+  apt:
     name: lxc
     state: present
+    update_cache: yes
+    cache_valid_time: 3600
 
-- stat:
+- name: lxc networking configuration
+  lineinfile:
     path: /etc/default/lxc-net
-  register: lxc_net_file
-
-- file:
-    path: /etc/default/lxc-net
-    state: touch
-  when: lxc_net_file.stat.islnk is not defined
-
-- lineinfile:
-    path: /etc/default/lxc-net
+    create: yes
     line: "{{ item.l }}"
     regexp: "{{ item.r }}"
-  with_items:
-    - {l: 'USE_LXC_BRIDGE="true"', r: '^USE_LXC_BRIDGE.*'}
-    - {l: 'LXC_BRIDGE="lxcbr0"', r: '^LXC_BRIDGE.*'}
-    - {l: 'LXC_ADDR="10.0.3.1"', r: '^LXC_ADDR.*'}
-    - {l: 'LXC_NETMASK="255.255.255.0"', r: '^LXC_NETMASK.*'}
-    - {l: 'LXC_NETWORK="10.0.3.0/24"', r: '^LXC_NETWORK.*'}
-    - {l: 'LXC_DHCP_RANGE="10.0.3.2,10.0.3.254"', r: '^LXC_DHCP_RANGE.*'}
-    - {l: 'LXC_DHCP_MAX="253"', r: '^LXC_DHCP_MAX.*'}
-    - {l: 'LXC_DHCP_CONFILE=""', r: '^LXC_DHCP_CONFILE.*'}
-    - {l: 'LXC_DOMAIN=""', r: '^LXC_DOMAIN.*'}
-#     - {l: '', r: '^'}
+  with_items: "{{ lxc.net }}"
   register: lxc_net_conf
 
-- systemd:
+- name: (re)start lxc-net
+  systemd:
     name: lxc-net
-    state: restarted
-  when: lxc_net_conf is changed
+    state: "{% if lxc_net_conf is changed %}re{% endif %}started"
+    enabled: yes
 
-- lineinfile:
+- name: lxc default container configuration
+  lineinfile:
     path: /etc/lxc/default.conf
     line: "{{ item.l }}"
     regexp: "{{ item.r }}"
-  with_items:
-    - {l: 'lxc.network.type = veth', r: '^lxc.network.type.*'}
-    - {l: 'lxc.network.flags = up', r: '^lxc.network.flags.*'}
-    - {l: 'lxc.network.link = lxcbr0', r: '^lxc.network.link.*'}
-    - {l: 'lxc.network.hwaddr = 00:FF:AA:00:xx:xx', r: '^lxc.network.hwaddr.*'}
-#     - {l: '', r: '^'}
+  with_items: "{{ lxc.conf }}"
+  register: lxc_conf
+
+- name: (re)start lxc
+  systemd:
+    name: lxc
+    state: "{% if lxc_conf is changed %}re{% endif %}started"
+    enabled: yes
